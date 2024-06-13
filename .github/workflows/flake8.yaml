@@ -30,7 +30,7 @@ jobs:
           flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} > flake8.log || echo "flake8 found issues"
 
       - name: View flake8 output  # 输出 flake8 结果以便查看
-        run: cat flake8.log  # 假设你将 flake8 输出重定向到了 flake8.log 文件中
+        run: cat flake8.log  # 假设你将 flake8 输出重定向到了 flake8.log 文件
 
       - name: Run flake8 and check for issues
         id: check-flake8
