@@ -37,7 +37,7 @@ jobs:
         run: echo ${{ steps.changed-files.outputs.files }} | grep -q . && exit 1 || exit 0
 
       - name: Prevent push on issues  # 步骤7: 防止提交包含问题的代码
-        if: ${{ steps.check-flake8.outcome == 'failure' }}
+        if: steps.check-flake8.outcome == 'failure'
         run: |
           echo "::error::flake8 found issues. Please fix them before pushing."
           exit 1
