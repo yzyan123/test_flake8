@@ -37,18 +37,26 @@ jobs:
         run: |
           echo "Running flake8 on changed files..."
           flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} > flake8.log || echo "flake8 found issues"
-          if [ -s flake8.log ]; then echo "true" > flake8-issues.txt; else echo "false" > flake8-issues.txt; fi
+          if [ -s flake8.log ]; then
+            echo "flake8 found issues"
+            echo "true" > flake8-issues.txt
+          else
+            echo "no issues found"
+            echo "false" > flake8-issues.txt
+          fi
         continue-on-error: true  # 确保即使 flake8 检查失败也能继续执行
-      
+
       - name: Output flake8 issues
-        id: flake8-s
         run: cat flake8-issues.txt  # 查看 flake8-issues.txt 文件的内容，以调试输出
 
       - name: Prevent push on issues
-        if: steps.flake8-s.output == 'true'
         run: |
-          echo "::error::flake8 found issues. Please fix them before pushing."
-          exit 1
+          if grep -q 'true' flake8-issues.txt; then
+            echo "::error::flake8 found issues. Please fix them before pushing."
+            exit 1
+          else
+            echo "No flake8 issues found. Push is allowed."
+          fi
 
 
 
