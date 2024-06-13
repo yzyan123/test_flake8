@@ -39,8 +39,8 @@ jobs:
           flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} > flake8.log || echo "flake8 found issues"
           if [ -s flake8.log ]; then exit 1; fi
 
-      - name: Prevent push on issues  # 步骤7: 防止提交包含问题的代码
-        if: ${{ steps.check-flake8.outcome != 'success' }}
+      - name: Prevent push on issues
+        if: ${{ steps.check-flake8.outcome == 'failure' }}
         run: |
           echo "::error::flake8 found issues. Please fix them before pushing."
           exit 1
