@@ -40,7 +40,7 @@ jobs:
           if [ -s flake8.log ]; then exit 1; fi
 
       - name: Prevent push on issues
-        if: ${{ steps.check-flake8.outcome == 'failure' }}
+        if: steps.check-flake8.outcome == 'failure'
         run: |
           echo "::error::flake8 found issues. Please fix them before pushing."
           exit 1
