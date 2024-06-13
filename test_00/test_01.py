@@ -1,4 +1,4 @@
-import os, sys
+import os
 import pathlib
 
 import json
@@ -6,13 +6,9 @@ import unittest
 # import match
 
 
-
-
 def m_test():
-    print ('test')
-    print('hhh') #1223gdjhasgsjh
+    print('test')
+    print('hhh')  #1223gdjhasgsjh
 
-
-
-#shdckj
+# shdckj
     print('hhh')
