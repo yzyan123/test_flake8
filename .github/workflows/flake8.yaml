@@ -1,39 +1,48 @@
-name: Run Flake8
-
-on:
-  push:
-    branches: 
-      - main
-      - development
-  pull_request:
-    branches:
-      - main
-      - development
-
+name: Build //检验名称
+on: [push] // 在进行Push操作时进行校验
 jobs:
-  flake8:
-    runs-on: ubuntu-latest
-
+  python-formatting: //	自定义名称为python样式校验的job
+    runs-on: ubuntu-latest //定义running env
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js 20
-        uses: actions/setup-node@v3
-        with:
-          node-version: '20'
-
-      - name: Set up Python
+      - name: Checkout //基础配置
+        uses: actions/checkout@v3
+      - name: Setup Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
-
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade pip
-          pip install flake8
-
-      - name: Run Flake8 with custom config
-        run: |
-          echo "Running custom Flake8..."
-          flake8 --config=.flake8 .
+          python-version: 3.9
+      - name: Install flake8 // 使用flake8进行代码样式校验
+        run: pip install flake8
+      - name: Run flake8 // 在env中运行flake8命令进行校验
+        run: flake8 api/
+  run-unit-tests:
+    needs: python-formatting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: 3.9
+      - name: Install flask //从这里开始下载所有pytest需要的安装包
+        run: pip install flask
+      - name: Install requests
+        run: pip install requests
+      - name: Install pytest //进行pytest
+        run: pip install pytest
+      - name: Run Unit Tests
+        run: pytest api/*.py
+  deploy-to-vercel: //后续deploy的action
+    needs: run-unit-tests
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Deploy to Vercel
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: '--prod'
+   
