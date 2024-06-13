@@ -1,48 +1,63 @@
-name: flake8 //检验名称
-on: [push] // 在进行Push操作时进行校验
+name: flake8  # 工作流的名称
+
+on:
+  push:  # 定义在 Push 事件时触发工作流
+    branches:
+      - main  # 监听 main 分支的推送事件
+
 jobs:
-  python-formatting: //	自定义名称为python样式校验的job
-    runs-on: ubuntu-latest //定义running env
+  python-formatting:  # 第一个作业名称为 python-formatting
+    runs-on: ubuntu-latest  # 在 Ubuntu 最新版本环境下运行作业
     steps:
-      - name: Checkout //基础配置
+      - name: Checkout  # 步骤1: 检出代码
         uses: actions/checkout@v3
-      - name: Setup Python
+
+      - name: Setup Python  # 步骤2: 设置 Python 环境
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
-      - name: Install flake8 // 使用flake8进行代码样式校验
+          python-version: 3.9  # 指定 Python 版本为 3.9
+
+      - name: Install flake8  # 步骤3: 安装 flake8
         run: pip install flake8
-      - name: Run flake8 // 在env中运行flake8命令进行校验
-        run: flake8 api/
-  run-unit-tests:
-    needs: python-formatting
-    runs-on: ubuntu-latest
+
+      - name: Run flake8  # 步骤4: 运行 flake8 校验
+        run: flake8 api/  # 校验 api 目录下的代码文件
+
+  run-unit-tests:  # 第二个作业名称为 run-unit-tests
+    needs: python-formatting  # 需要等待 python-formatting 作业完成后再执行
+    runs-on: ubuntu-latest  # 在 Ubuntu 最新版本环境下运行作业
     steps:
-      - name: Checkout
+      - name: Checkout  # 步骤1: 检出代码
         uses: actions/checkout@v3
-      - name: Setup Python
+
+      - name: Setup Python  # 步骤2: 设置 Python 环境
         uses: actions/setup-python@v4
         with:
-          python-version: 3.9
-      - name: Install flask //从这里开始下载所有pytest需要的安装包
+          python-version: 3.9  # 指定 Python 版本为 3.9
+
+      - name: Install flask  # 步骤3: 安装 Flask
         run: pip install flask
-      - name: Install requests
+
+      - name: Install requests  # 步骤4: 安装 requests
         run: pip install requests
-      - name: Install pytest //进行pytest
+
+      - name: Install pytest  # 步骤5: 安装 pytest
         run: pip install pytest
-      - name: Run Unit Tests
-        run: pytest api/*.py
-  deploy-to-vercel: //后续deploy的action
-    needs: run-unit-tests
-    runs-on: ubuntu-latest
+
+      - name: Run Unit Tests  # 步骤6: 运行单元测试
+        run: pytest api/*.py  # 运行 api 目录下的所有 .py 文件中的单元测试
+
+  deploy-to-vercel:  # 第三个作业名称为 deploy-to-vercel
+    needs: run-unit-tests  # 需要等待 run-unit-tests 作业完成后再执行
+    runs-on: ubuntu-latest  # 在 Ubuntu 最新版本环境下运行作业
     steps:
-      - name: Checkout
+      - name: Checkout  # 步骤1: 检出代码
         uses: actions/checkout@v3
-      - name: Deploy to Vercel
+
+      - name: Deploy to Vercel  # 步骤2: 部署到 Vercel
         uses: amondnet/vercel-action@v20
         with:
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
-   
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}  # 从 Secrets 中获取 Vercel Token
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}  # 从 Secrets 中获取 Vercel 组织 ID
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}  # 从 Secrets 中获取 Vercel 项目 ID
+          vercel-args: '--prod'  # 部署到生产环境
