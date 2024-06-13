@@ -37,7 +37,7 @@ jobs:
         run: |
           echo "Running flake8 on changed files..."
           flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} > flake8.log || echo "flake8 found issues"
-          if [ -s flake8.log ]; then echo "true" else echo "false"; fi
+          if [ -s flake8.log ]; then echo "true"; fi
         continue-on-error: true  # 确保即使 flake8 检查失败也能继续执行
 
       - name: Prevent push on issues
