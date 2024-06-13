@@ -1,4 +1,4 @@
-name: Build //检验名称
+name: flake8 //检验名称
 on: [push] // 在进行Push操作时进行校验
 jobs:
   python-formatting: //	自定义名称为python样式校验的job
