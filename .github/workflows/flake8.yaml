@@ -20,8 +20,14 @@ jobs:
       - name: Install flake8  # 步骤3: 安装 flake8
         run: pip install flake8
 
-      - name: Run flake8  # 步骤4: 运行 flake8 校验
-        run: flake8 api/  # 校验 api 目录下的代码文件
+      - name: Determine changed files  # 步骤4: 确定更改的文件
+        id: changed-files
+        run: echo "::set-output name=files::$(git diff --name-only HEAD^)"
+
+      - name: Run flake8  # 步骤5: 运行 flake8 校验
+        run: |
+          echo "Running flake8 on changed files..."
+          flake8 ${{ steps.changed-files.outputs.files }}  # 仅校验更改的文件
 
   # run-unit-tests:  # 第二个作业名称为 run-unit-tests
   #   needs: python-formatting  # 需要等待 python-formatting 作业完成后再执行
