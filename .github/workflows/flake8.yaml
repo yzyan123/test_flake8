@@ -41,11 +41,11 @@ jobs:
         continue-on-error: true  # 确保即使 flake8 检查失败也能继续执行
       
       - name: Output flake8 issues
-        id: flake8-issues
+        id: flake8-s
         run: cat flake8-issues.txt  # 查看 flake8-issues.txt 文件的内容，以调试输出
 
       - name: Prevent push on issues
-        if: steps.flake8-issues.output == 'true'
+        if: steps.flake8-s.output == 'true'
         run: |
           echo "::error::flake8 found issues. Please fix them before pushing."
           exit 1
