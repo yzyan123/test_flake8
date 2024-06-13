@@ -27,10 +27,21 @@ jobs:
       - name: Run flake8  # 步骤5: 运行 flake8 校验
         run: |
           echo "Running flake8 on changed files..."
-          flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} || echo "flake8 found issues"
+          flake8 --config=.flake8 ${{ steps.changed-files.outputs.files }} > flake8.log || echo "flake8 found issues"
 
       - name: View flake8 output  # 输出 flake8 结果以便查看
         run: cat flake8.log  # 假设你将 flake8 输出重定向到了 flake8.log 文件中
+
+      - name: Check for flake8 issues  # 步骤6: 检查是否有 flake8 问题
+        id: check-flake8
+        run: echo ${{ steps.changed-files.outputs.files }} | grep -q . && exit 1 || exit 0
+
+      - name: Prevent push on issues  # 步骤7: 防止提交包含问题的代码
+        if: ${{ steps.check-flake8.outcome == 'failure' }}
+        run: |
+          echo "::error::flake8 found issues. Please fix them before pushing."
+          exit 1
+
 
 
   # run-unit-tests:  # 第二个作业名称为 run-unit-tests
