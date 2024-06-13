@@ -1,3 +1,5 @@
 import os, sys
 import pathlib
-print ('test')
+import math
+def m_test():
+    print ('test')
